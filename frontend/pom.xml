@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>admin_jsp</artifactId>
+    <groupId>com.fwtai</groupId>
+    <version>v1.0.0</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>frontend</artifactId>
+  <description>
+
+    模块化开发,本前端模块frontend打包步骤:
+    １.先注释掉web模块里的pom.xml里的build节点,因为本模块依赖web子模块,而web子模块又可以单独打包发布;
+    ２.双击父模块admin_jsp里maven快捷键的install,不推荐双击package打包,因为可能打包后jar会很大;
+    ３.另外,web 、api等模块需要在单独的模块里打包jar才不被叠加jar文件才小;
+    ４.只打包web或api即可实现前后端分离;
+    ５.如果不想前后端分离则打包模块frontend,但务必要注释模块web模块里的pom.xml里的build节点;
+    ６.每次修改代码都要父模块install一下
+    ７.注意service层的方法上是否有final关键字,否则也会这个报错,或提示系统出现错误(其实是空指针)
+
+  </description>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.fwtai</groupId>
+      <artifactId>web</artifactId>
+      <version>v1.0.0</version>
+    </dependency>
+    <!--spring boot 默认情况下是不支持jsp的,若要对jsp的支持仅需此依赖[开始]-->
+    <dependency>
+      <groupId>org.apache.tomcat.embed</groupId>
+      <artifactId>tomcat-embed-jasper</artifactId>
+      <version>${tomcat.version}</version>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <version>1.4.2.RELEASE</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
+        <configuration>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.22.2</version>
+        <configuration>
+          <skipTests>true</skipTests>
+        </configuration>
+      </plugin>
+    </plugins>
+    <resources>
+      <resource>
+        <directory>${basedir}/src/main/webapp</directory>
+        <targetPath>META-INF/resources</targetPath>
+        <includes>
+          <include>**/**</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>${basedir}/src/main/resources</directory>
+        <includes>
+          <include>**/**</include>
+        </includes>
+        <filtering>false</filtering>
+      </resource>
+      <resource>
+        <directory>src/main/java</directory>
+        <includes>
+          <include>**/*.xml</include>
+          <include>**/*.properties</include>
+          <include>**/*.ftl</include>
+        </includes>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+  </build>
+</project>
